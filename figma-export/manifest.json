@@ -1,0 +1,9 @@
+{
+  "name": "My Account Prototype Import",
+  "id": "my-account-prototype-import",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ]
+}

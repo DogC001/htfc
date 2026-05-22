@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的账户改版原型 V3</title>
+  <style>
+    :root {
+      --tj-bg-page: #ebf2fa;
+      --tj-bg-card: #f7f9fa;
+      --tj-bg-input: #f6f8fd;
+      --tj-border: #e1e7eb;
+      --tj-border-strong: #ccd8e4;
+      --tj-title: #142033;
+      --tj-body: #56617c;
+      --tj-muted: #8d95a5;
+      --tj-primary-start: #4486f5;
+      --tj-primary-end: #72c6dd;
+      --tj-secondary-blue: #498df2;
+      --tj-secondary-blue-bg: #e7f0fd;
+      --tj-secondary-cyan-bg: #e4f1fb;
+      --tj-link: #4766ff;
+      --tj-danger: #fe4c4f;
+      --tj-danger-bg: #fff0f0;
+      --tj-success: #2db185;
+      --tj-success-bg: #e7f9f3;
+      --tj-warning: #f1913d;
+      --tj-warning-bg: #fdf2e7;
+      --tj-radius-xs: 4px;
+      --tj-radius-sm: 8px;
+      --tj-radius-md: 16px;
+      --tj-radius-pill: 999px;
+      --tj-shadow-card: 0 18px 48px rgba(83, 128, 166, 0.1);
+      --tj-shadow-panel: 0 30px 80px rgba(99, 143, 179, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      --tj-font: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      color: var(--tj-title);
+      font-family: var(--tj-font);
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(186, 229, 235, 0.72), transparent 30%),
+        radial-gradient(circle at 86% 8%, rgba(198, 215, 244, 0.62), transparent 28%),
+        radial-gradient(circle at 50% 94%, rgba(221, 242, 246, 0.82), transparent 34%),
+        linear-gradient(135deg, #eef8fb 0%, #eef4fb 48%, #f4f8fc 100%);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 16px 24px 28px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      height: 80px;
+      max-width: none;
+      margin: -16px -24px 0;
+      display: grid;
+      grid-template-columns: 260px minmax(780px, 1fr) 260px;
+      align-items: center;
+      gap: 20px;
+      padding: 0 32px;
+      border: 0;
+      border-radius: 0;
+      background: linear-gradient(180deg, rgba(249, 253, 255, 0.98), rgba(241, 248, 254, 0.94));
+      box-shadow: 0 1px 0 rgba(210, 222, 235, 0.82);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: #df3d25;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::before,
+    .logo-mark::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 24px;
+      top: 7px;
+      border: 4px solid #fff;
+      border-bottom: 0;
+      transform: rotate(45deg);
+    }
+
+    .logo-mark::before {
+      left: 4px;
+    }
+
+    .logo-mark::after {
+      right: 4px;
+    }
+
+    .brand-text {
+      min-width: 0;
+      padding-right: 10px;
+      border-right: 1px solid rgba(202, 214, 226, 0.9);
+    }
+
+    .brand-cn {
+      font-size: 18px;
+      line-height: 21px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .brand-en {
+      color: var(--tj-muted);
+      font-size: 9px;
+      line-height: 12px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+
+    .seal {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--tj-border);
+      border-radius: 8px;
+      color: #172033;
+      background: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      writing-mode: vertical-rl;
+    }
+
+    .main-nav {
+      min-width: 0;
+      display: flex;
+      justify-content: center;
+      gap: clamp(22px, 2.45vw, 46px);
+      color: var(--tj-body);
+      font-size: 14px;
+      line-height: 20px;
+      white-space: nowrap;
+    }
+
+    .main-nav a {
+      position: relative;
+      color: inherit;
+      text-decoration: none;
+      padding: 28px 0 25px;
+    }
+
+    .main-nav a:hover,
+    .main-nav a.active {
+      color: var(--tj-secondary-blue);
+      font-weight: 700;
+    }
+
+    .main-nav a.active::after {
+      content: "";
+      position: absolute;
+      left: 20%;
+      right: 20%;
+      bottom: 16px;
+      height: 3px;
+      border-radius: var(--tj-radius-pill);
+      background: linear-gradient(90deg, var(--tj-primary-start), var(--tj-primary-end));
+    }
+
+    .userbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .ai {
+      color: #3f73ff;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .icon-btn {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--tj-border);
+      border-radius: 50%;
+      color: var(--tj-body);
+      background: transparent;
+    }
+
+    .icon-btn:hover {
+      color: var(--tj-secondary-blue);
+      background: var(--tj-secondary-blue-bg);
+    }
+
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -10px;
+      min-width: 24px;
+      height: 18px;
+      border-radius: var(--tj-radius-pill);
+      padding: 0 6px;
+      color: #fff;
+      background: #ff4d5a;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .username {
+      max-width: 104px;
+      overflow: hidden;
+      color: var(--tj-title);
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 42%, #ffffff 0 7px, transparent 8px),
+        radial-gradient(circle at 50% 70%, #ffffff 0 11px, transparent 12px),
+        #d9e6f3;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.86);
+    }
+
+    .shell {
+      max-width: 1680px;
+      height: calc(100vh - 136px);
+      min-height: 720px;
+      margin: 24px auto 0;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(248, 253, 255, 0.58)),
+        rgba(248, 253, 255, 0.58);
+      box-shadow:
+        0 30px 80px rgba(99, 143, 179, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(18px);
+    }
+
+    .account-layout {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 288px minmax(0, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .sidebar,
+    .surface {
+      min-height: 0;
+      border: 1px solid rgba(226, 234, 240, 0.96);
+      border-radius: var(--tj-radius-md);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 18px 48px rgba(83, 128, 166, 0.1);
+    }
+
+    .sidebar {
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100%;
+      padding: 24px 16px;
+      background:
+        radial-gradient(circle at 32% 0%, rgba(255, 255, 255, 0.96), transparent 34%),
+        linear-gradient(180deg, rgba(234, 249, 252, 0.96), rgba(239, 250, 253, 0.86));
+      box-shadow:
+        0 18px 48px rgba(83, 128, 166, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      top: 24px;
+      right: 0;
+      bottom: 24px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(193, 210, 224, 0.8), transparent);
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      border-radius: var(--tj-radius-pill);
+      background: rgba(141, 149, 165, 0.28);
+    }
+
+    .account-title {
+      margin: 0 12px 24px;
+      color: var(--tj-title);
+      font-size: 22px;
+      line-height: 28px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .account-title small {
+      margin-left: 8px;
+      color: var(--tj-muted);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+      letter-spacing: 1.6px;
+      vertical-align: 2px;
+    }
+
+    .menu {
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu-block {
+      margin: 0;
+    }
+
+    .menu-item {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 0;
+      border-radius: 10px;
+      padding: 0 14px;
+      color: var(--tj-body);
+      background: rgba(255, 255, 255, 0.46);
+      text-align: left;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+
+    .menu-item:hover {
+      color: var(--tj-secondary-blue);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .menu-item.active {
+      color: #ffffff;
+      background: linear-gradient(90deg, var(--tj-primary-start), var(--tj-primary-end));
+      box-shadow: 0 10px 24px rgba(68, 134, 245, 0.18);
+      font-weight: 800;
+    }
+
+    .menu-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .menu-caret {
+      color: var(--tj-muted);
+      font-size: 12px;
+    }
+
+    .menu-label::before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 7px solid transparent;
+    }
+
+    .menu-item.active .menu-label::before {
+      border-left-color: #ffffff;
+    }
+
+    .submenu {
+      display: none;
+      padding: 4px 0 2px 24px;
+    }
+
+    .menu-block.open .submenu {
+      display: grid;
+      gap: 2px;
+    }
+
+    .submenu .menu-item {
+      height: 32px;
+      border-radius: 8px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .submenu .menu-item:hover {
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .submenu .menu-item.active {
+      color: #0d59c4;
+      background: rgba(231, 240, 253, 0.9);
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .submenu .menu-item.active .menu-label::before {
+      border-left-color: var(--tj-secondary-blue);
+    }
+
+    .surface {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.94)),
+        #ffffff;
+    }
+
+    .content-top {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 28px 18px;
+      border-bottom: 1px solid rgba(225, 231, 235, 0.92);
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .content-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 800;
+    }
+
+    .content-heading::before {
+      content: "";
+      width: 4px;
+      height: 20px;
+      border-radius: var(--tj-radius-pill);
+      background: linear-gradient(180deg, var(--tj-primary-start), var(--tj-primary-end));
+    }
+
+    .content-desc {
+      margin: 6px 0 0 14px;
+      color: var(--tj-muted);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .view {
+      display: none;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: auto;
+    }
+
+    .view.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-body {
+      min-height: 0;
+      flex: 1 1 auto;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 95% 10%, rgba(228, 241, 251, 0.48), transparent 24%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(247, 249, 250, 0.48));
+    }
+
+    .content-body.narrow {
+      max-width: 1020px;
+    }
+
+    .btn {
+      height: 32px;
+      min-width: 88px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: var(--tj-radius-pill);
+      padding: 0 18px;
+      border: 1px solid transparent;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, filter 0.16s ease;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(90deg, var(--tj-primary-start), var(--tj-primary-end));
+      box-shadow: 0 10px 22px rgba(68, 134, 245, 0.18);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.04);
+    }
+
+    .btn-outline {
+      color: var(--tj-secondary-blue);
+      border-color: var(--tj-secondary-blue);
+      background: #fff;
+    }
+
+    .btn-outline:hover {
+      background: var(--tj-secondary-blue-bg);
+    }
+
+    .btn-text {
+      min-width: auto;
+      height: auto;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      color: var(--tj-link);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .btn-danger {
+      color: var(--tj-danger);
+      border-color: rgba(254, 76, 79, 0.45);
+      background: #fff;
+    }
+
+    .btn-danger:hover {
+      background: var(--tj-danger-bg);
+    }
+
+    .btn:disabled {
+      color: rgba(255, 255, 255, 0.74);
+      background: linear-gradient(90deg, #a9c9f9, #b7d9f5);
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: none;
+    }
+
+    .icon-line {
+      width: 16px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      color: currentColor;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .profile-list {
+      display: grid;
+      max-width: 1120px;
+      gap: 0;
+      padding: 18px 20px;
+      border: 1px solid rgba(226, 234, 240, 0.82);
+      border-radius: var(--tj-radius-md);
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .profile-row {
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: 132px minmax(220px, 1fr) 180px;
+      align-items: center;
+      column-gap: 24px;
+    }
+
+    .profile-row.avatar-row {
+      min-height: 104px;
+      align-items: center;
+    }
+
+    .field-label {
+      color: var(--tj-body);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .field-value {
+      color: var(--tj-title);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 58% 23%, #f7d66b 0 12px, transparent 13px),
+        radial-gradient(circle at 46% 39%, #9a8cff 0 15px, transparent 16px),
+        linear-gradient(135deg, #1d2d5a, #111827 56%, #65403c);
+      box-shadow: 0 12px 28px rgba(20, 32, 51, 0.14), inset 0 0 0 3px rgba(255, 255, 255, 0.68);
+    }
+
+    .help-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 0;
+      padding: 0;
+      color: var(--tj-body);
+      background: transparent;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 500;
+    }
+
+    .help-link:hover {
+      color: var(--tj-link);
+    }
+
+    .company-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+
+    .company-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 110px;
+      border: 1px solid rgba(45, 177, 133, 0.28);
+      border-radius: var(--tj-radius-md);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, #fff 58%, rgba(231, 249, 243, 0.78) 100%);
+      box-shadow: 0 12px 32px rgba(83, 128, 166, 0.08);
+    }
+
+    .company-card::after {
+      content: "";
+      position: absolute;
+      right: -88px;
+      bottom: -96px;
+      width: 230px;
+      height: 230px;
+      border: 16px double rgba(45, 177, 133, 0.1);
+      border-radius: 34px;
+      transform: rotate(-34deg);
+    }
+
+    .company-main {
+      position: relative;
+      z-index: 1;
+      padding: 22px 22px 14px;
+    }
+
+    .company-title {
+      margin: 0 0 8px;
+      color: var(--tj-title);
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+
+    .company-type {
+      margin-bottom: 16px;
+      color: var(--tj-body);
+    }
+
+    .company-name {
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 10px;
+      color: var(--tj-body);
+    }
+
+    .contact-list span {
+      color: var(--tj-success);
+      font-weight: 800;
+    }
+
+    .verified {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 10px;
+      padding-right: 22px;
+      color: #108a38;
+      font-weight: 700;
+    }
+
+    .verified-dot {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: #08a623;
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .company-footer {
+      position: relative;
+      z-index: 1;
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--tj-border);
+      background: rgba(248, 251, 254, 0.78);
+    }
+
+    .switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      display: inline-block;
+      flex: 0 0 auto;
+      vertical-align: middle;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--tj-radius-pill);
+      background: #c8d0dc;
+      transition: background 0.18s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(20, 32, 51, 0.18);
+      transition: transform 0.18s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(90deg, var(--tj-primary-start), var(--tj-primary-end));
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(24px);
+    }
+
+    .switch-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--tj-body);
+      font-weight: 600;
+    }
+
+    .notice {
+      max-width: 1040px;
+      color: var(--tj-body);
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .notice h3 {
+      margin: 0 0 18px;
+      color: var(--tj-title);
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .agree {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      accent-color: var(--tj-secondary-blue);
+    }
+
+    .center-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .table-card {
+      overflow: hidden;
+      border: 1px solid var(--tj-border);
+      border-radius: var(--tj-radius-md);
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(83, 128, 166, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--tj-border);
+      text-align: left;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    th {
+      color: var(--tj-body);
+      background: #f0f4f9;
+      font-weight: 800;
+    }
+
+    tbody tr:hover {
+      background: rgba(73, 141, 242, 0.06);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .action-inline {
+      display: inline-flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .danger-text {
+      border: 0;
+      color: var(--tj-danger);
+      background: transparent;
+      font-weight: 700;
+    }
+
+    .pref-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--tj-border);
+    }
+
+    .tab {
+      position: relative;
+      height: 44px;
+      border: 0;
+      color: var(--tj-body);
+      background: transparent;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .tab:hover,
+    .tab.active {
+      color: #0d59c4;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 30%;
+      right: 30%;
+      bottom: -1px;
+      height: 3px;
+      border-radius: var(--tj-radius-pill) var(--tj-radius-pill) 0 0;
+      background: linear-gradient(90deg, var(--tj-primary-start), var(--tj-primary-end));
+    }
+
+    .commodity-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 14px;
+    }
+
+    .tag-option {
+      height: 40px;
+      border: 1px solid var(--tj-border);
+      border-radius: var(--tj-radius-sm);
+      color: var(--tj-title);
+      background: #fff;
+      font-weight: 500;
+    }
+
+    .tag-option:hover {
+      color: var(--tj-secondary-blue);
+      border-color: #7aacf5;
+      background: var(--tj-secondary-blue-bg);
+    }
+
+    .tag-option.active {
+      color: #0d59c4;
+      border-color: var(--tj-secondary-blue);
+      background: var(--tj-secondary-blue-bg);
+      font-weight: 700;
+    }
+
+    .checkbox-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      color: var(--tj-body);
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      margin: 10px 0 54px;
+    }
+
+    .step {
+      position: relative;
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      color: var(--tj-muted);
+      font-weight: 600;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      top: 16px;
+      left: -50%;
+      width: 100%;
+      height: 3px;
+      background: #c7d0dc;
+    }
+
+    .step:first-child::before {
+      display: none;
+    }
+
+    .step-dot {
+      position: relative;
+      z-index: 1;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 3px solid #c7d0dc;
+      border-radius: 50%;
+      background: #fff;
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: 700;
+    }
+
+    .step.done,
+    .step.active {
+      color: #0d59c4;
+    }
+
+    .step.done .step-dot,
+    .step.active .step-dot {
+      border-color: var(--tj-secondary-blue);
+      color: var(--tj-secondary-blue);
+    }
+
+    .qr-area {
+      display: grid;
+      justify-items: center;
+      gap: 18px;
+    }
+
+    .qr {
+      width: 270px;
+      height: 270px;
+      border: 10px solid #fff;
+      background:
+        linear-gradient(90deg, #111 8px, transparent 8px) 0 0 / 24px 24px,
+        linear-gradient(#111 8px, transparent 8px) 0 0 / 24px 24px,
+        linear-gradient(45deg, transparent 44%, #111 45% 55%, transparent 56%) 0 0 / 36px 36px,
+        #fff;
+      box-shadow: 0 18px 44px rgba(20, 32, 51, 0.12);
+    }
+
+    .setting-list {
+      display: grid;
+      max-width: 780px;
+      gap: 0;
+      padding-top: 8px;
+      padding: 18px 20px;
+      border: 1px solid rgba(226, 234, 240, 0.82);
+      border-radius: var(--tj-radius-md);
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .setting-row {
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: 112px 72px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+    }
+
+    .setting-note {
+      margin: -8px 0 16px 124px;
+      color: var(--tj-body);
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .manager-card {
+      width: 520px;
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 22px;
+      align-items: center;
+      padding: 22px;
+      border: 1px solid var(--tj-border);
+      border-radius: var(--tj-radius-md);
+      background: linear-gradient(135deg, #fff, #f7fbff);
+    }
+
+    .manager-photo {
+      width: 112px;
+      height: 112px;
+      border-radius: var(--tj-radius-sm);
+      background:
+        radial-gradient(circle at 50% 34%, #f5d3bd 0 24px, transparent 25px),
+        linear-gradient(180deg, #57a4ec 0 48%, #f5f8ff 48% 100%);
+      box-shadow: 0 16px 34px rgba(83, 128, 166, 0.18);
+    }
+
+    .manager-name {
+      margin: 0;
+      font-size: 22px;
+      line-height: 28px;
+      font-weight: 800;
+    }
+
+    .manager-meta {
+      margin-top: 8px;
+      color: var(--tj-body);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .form-item {
+      display: grid;
+      gap: 8px;
+    }
+
+    .form-item.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-item label {
+      color: var(--tj-body);
+      font-weight: 700;
+    }
+
+    .required {
+      color: var(--tj-danger);
+    }
+
+    .input,
+    .select {
+      height: 40px;
+      width: 100%;
+      border: 1px solid var(--tj-border);
+      border-radius: var(--tj-radius-sm);
+      padding: 0 12px;
+      color: var(--tj-title);
+      background: var(--tj-bg-input);
+      outline: none;
+    }
+
+    .input:hover,
+    .select:hover {
+      border-color: var(--tj-border-strong);
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--tj-secondary-blue);
+      box-shadow: 0 0 0 3px rgba(73, 141, 242, 0.12);
+    }
+
+    .input:disabled {
+      color: var(--tj-muted);
+      background: #eef2f7;
+    }
+
+    .upload {
+      height: 160px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed var(--tj-border-strong);
+      border-radius: var(--tj-radius-sm);
+      color: var(--tj-muted);
+      background: rgba(246, 249, 253, 0.76);
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      background: rgba(20, 32, 51, 0.44);
+      z-index: 20;
+    }
+
+    .modal-mask.open {
+      display: grid;
+    }
+
+    .modal {
+      width: 760px;
+      max-width: 92vw;
+      max-height: 90vh;
+      overflow: auto;
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: var(--tj-radius-md);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 30px 90px rgba(20, 32, 51, 0.28);
+    }
+
+    .modal-head {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--tj-border);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+    .close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      color: var(--tj-muted);
+      background: transparent;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .close:hover {
+      color: var(--tj-title);
+      background: var(--tj-bg-card);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .radio-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 20px;
+      color: var(--tj-body);
+      font-weight: 700;
+    }
+
+    .radio-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .floating-help {
+      position: fixed;
+      right: 28px;
+      bottom: 28px;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      color: #fff;
+      background: #1f2937;
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 800;
+      box-shadow: 0 20px 42px rgba(20, 32, 51, 0.22);
+      z-index: 10;
+    }
+
+    @media (max-width: 1440px) {
+      .page {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar {
+        grid-template-columns: 230px minmax(620px, 1fr) 230px;
+      }
+
+      .main-nav {
+        gap: 18px;
+        font-size: 14px;
+      }
+
+      .company-list {
+        grid-template-columns: 1fr;
+      }
+
+      .account-layout {
+        grid-template-columns: 270px minmax(0, 1fr);
+      }
+
+      .commodity-grid {
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-mark" aria-label="华泰期货标识"></div>
+        <div class="brand-text">
+          <div class="brand-cn">华泰期货</div>
+          <div class="brand-en">HUATAI FUTURES</div>
+        </div>
+        <div class="seal">天玑</div>
+      </div>
+
+      <nav class="main-nav" aria-label="主导航">
+        <a href="#">首页</a>
+        <a class="active" href="#">工作台</a>
+        <a href="#">风险智套</a>
+        <a href="#">行业智研</a>
+        <a href="#">活动中心</a>
+        <a href="#">交易服务</a>
+        <a href="#">天玑学院</a>
+        <a href="#">走进华泰</a>
+        <a href="#">华小七</a>
+      </nav>
+
+      <div class="userbar">
+        <button class="icon-btn" aria-label="消息提醒">
+          <span class="icon-line">⌁</span>
+          <span class="badge">22</span>
+        </button>
+        <div class="avatar" aria-label="用户头像"></div>
+        <div class="username">用户0001⌄</div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <div class="account-layout">
+        <aside class="sidebar">
+          <h1 class="account-title">我的账户 <small>/ MY ACCOUNT</small></h1>
+          <nav class="menu" aria-label="我的账户菜单">
+            <div class="menu-block">
+              <button class="menu-item active" data-page="basic-info"><span class="menu-label">基本信息</span></button>
+            </div>
+            <div class="menu-block">
+              <button class="menu-item" data-page="enterprise-verification"><span class="menu-label">企业认证</span></button>
+            </div>
+            <div class="menu-block">
+              <button class="menu-item" data-page="account-management"><span class="menu-label">账户管理</span></button>
+            </div>
+            <div class="menu-block open">
+              <button class="menu-item" data-toggle-group type="button"><span class="menu-label">关于系统</span><span class="menu-caret">⌃</span></button>
+              <div class="submenu">
+                <button class="menu-item" data-page="about-system"><span class="menu-label">协议清单</span></button>
+              </div>
+            </div>
+            <div class="menu-block">
+              <button class="menu-item" data-page="preferences"><span class="menu-label">偏好设置</span></button>
+            </div>
+            <div class="menu-block open">
+              <button class="menu-item" data-toggle-group type="button"><span class="menu-label">企业域</span><span class="menu-caret">⌃</span></button>
+              <div class="submenu">
+                <button class="menu-item" data-page="enterprise-domain"><span class="menu-label">开通企业域</span></button>
+                <button class="menu-item" data-page="enterprise-domain"><span class="menu-label">加入企业域</span></button>
+                <button class="menu-item" data-page="enterprise-domain"><span class="menu-label">我的</span></button>
+              </div>
+            </div>
+            <div class="menu-block open">
+              <button class="menu-item" data-toggle-group type="button"><span class="menu-label">消息提醒</span><span class="menu-caret">⌃</span></button>
+              <div class="submenu">
+                <button class="menu-item" data-page="message-notifications"><span class="menu-label">消息通知</span></button>
+                <button class="menu-item" data-page="message-notifications"><span class="menu-label">微信消息</span></button>
+              </div>
+            </div>
+            <div class="menu-block">
+              <button class="menu-item" data-page="business-manager"><span class="menu-label">我的业务经理</span></button>
+            </div>
+          </nav>
+        </aside>
+
+        <section class="surface">
+          <section class="view active" id="basic-info">
+            <div class="content-top">
+              <h2 class="content-heading">个人信息</h2>
+            </div>
+            <div class="content-body narrow">
+              <div class="profile-list">
+                <div class="profile-row avatar-row">
+                  <div class="field-label">头像</div>
+                  <div class="profile-avatar"></div>
+                  <div><button class="btn btn-outline">编辑</button></div>
+                </div>
+
+                <div class="profile-row">
+                  <div class="field-label">昵称</div>
+                  <div class="field-value">天玑用户</div>
+                  <div></div>
+                </div>
+
+                <div class="profile-row">
+                  <div class="field-label">企业名称</div>
+                  <div class="field-value">奕丰基金销售有限公司</div>
+                  <div><button class="help-link">修改默认企业 <span>?</span></button></div>
+                </div>
+
+                <div class="profile-row">
+                  <div class="field-label">密码</div>
+                  <div class="field-value">**********</div>
+                  <div><button class="btn btn-outline">修改</button></div>
+                </div>
+
+                <div class="profile-row">
+                  <div class="field-label">手机号</div>
+                  <div class="field-value">184****1472</div>
+                  <div></div>
+                </div>
+
+                <div class="profile-row">
+                  <div class="field-label">微信</div>
+                  <div class="field-value">已绑定</div>
+                  <div><button class="btn btn-outline">解绑</button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="enterprise-verification">
+            <div class="content-top">
+              <h2 class="content-heading">企业认证</h2>
+              <button class="btn btn-primary" data-open-modal>多企业认证</button>
+            </div>
+            <div class="content-body">
+              <div class="company-list">
+                <article class="company-card">
+                  <div class="company-main">
+                    <h3 class="company-title">曹端红</h3>
+                    <div class="company-type">其他</div>
+                    <div class="company-name">奕丰基金销售有限公司</div>
+                    <div class="contact-list">
+                      <div><span>☎</span> +816 184****1472</div>
+                      <div><span>✉</span> dcao0228@foxmail.com</div>
+                      <div><span>●</span> 北京市</div>
+                    </div>
+                  </div>
+                  <div class="verified"><div class="verified-dot">✓</div><div>已认证</div></div>
+                  <div class="company-footer">
+                    <label class="switch-label"><span class="switch"><input type="checkbox" checked /><span class="slider"></span></span>默认企业</label>
+                    <button class="btn btn-outline" data-open-modal>更新认证</button>
+                  </div>
+                </article>
+
+                <article class="company-card">
+                  <div class="company-main">
+                    <h3 class="company-title">曹端红</h3>
+                    <div class="company-type">高管</div>
+                    <div class="company-name">德科信息有限公司</div>
+                    <div class="contact-list">
+                      <div><span>☎</span> +816 184****1472</div>
+                      <div><span>✉</span> dcao0228@foxmail.com</div>
+                      <div><span>●</span> 天津市</div>
+                    </div>
+                  </div>
+                  <div class="verified"><div class="verified-dot">✓</div><div>已认证</div></div>
+                  <div class="company-footer">
+                    <label class="switch-label"><span class="switch"><input type="checkbox" /><span class="slider"></span></span>默认企业</label>
+                    <button class="btn btn-outline" data-open-modal>更新认证</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="account-management">
+            <div class="content-top">
+              <h2 class="content-heading">账户注销</h2>
+            </div>
+            <div class="content-body">
+              <div class="notice">
+                <h3>注销华泰天玑账户须知</h3>
+                <p>1、华泰天玑提醒您，注销账号为不可恢复的操作，账号注销后您将无法再使用该账号或找回您在华泰天玑上传、浏览、关注、收藏的任何内容或信息。</p>
+                <p>2、建议您在注销前自行备份注销账号的相关信息，并确认与该账号相关的所有服务均已进行妥善处理。</p>
+                <p>3、注销成功后，我们将按照《华泰天玑隐私政策》相关条款删除您的个人信息，或对其进行匿名化处理。</p>
+                <label class="agree"><input id="cancelAgree" type="checkbox" /> 我已同意《华泰天玑账户注销条款》</label>
+                <div class="center-actions"><button id="cancelAccountBtn" class="btn btn-primary" disabled>确认注销</button></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="about-system">
+            <div class="content-top">
+              <h2 class="content-heading">华泰天玑系统协议清单</h2>
+            </div>
+            <div class="content-body">
+              <div class="table-card">
+                <table>
+                  <thead>
+                    <tr><th style="width: 90px;">序号</th><th>协议名称</th><th style="width: 180px;">操作</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>1</td><td>天玑AI助手华小七个人信息保护规则</td><td><span class="action-inline"><button class="btn-text">查看</button><button class="danger-text">撤回</button></span></td></tr>
+                    <tr><td>2</td><td>天玑AI助手华小七用户协议</td><td><span class="action-inline"><button class="btn-text">查看</button><button class="danger-text">撤回</button></span></td></tr>
+                    <tr><td>3</td><td>华泰天玑隐私保护协议</td><td><span class="action-inline"><button class="btn-text">查看</button><button class="danger-text">撤回</button></span></td></tr>
+                    <tr><td>4</td><td>华泰天玑用户注册协议</td><td><span class="action-inline"><button class="btn-text">查看</button><button class="danger-text">撤回</button></span></td></tr>
+                    <tr><td>5</td><td>华泰天玑隐私保护政策补充协议</td><td><button class="btn-text">查看</button></td></tr>
+                    <tr><td>6</td><td>华泰期货人脸识别授权协议</td><td><button class="btn-text">查看</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="preferences">
+            <div class="content-top">
+              <div>
+                <h2 class="content-heading">品种偏好设置</h2>
+                <p class="content-desc">请根据您的偏好选择期货品种，我们将为您提供更精准的行业资讯</p>
+              </div>
+              <label class="switch-label">偏好设置 <span class="switch"><input type="checkbox" /><span class="slider"></span></span></label>
+            </div>
+            <div class="content-body">
+              <div class="tabs" id="marketTabs">
+                <button class="tab active" data-market="上期所">上期所</button>
+                <button class="tab" data-market="大商所">大商所</button>
+                <button class="tab" data-market="郑商所">郑商所</button>
+                <button class="tab" data-market="广期所">广期所</button>
+                <button class="tab" data-market="上期能源">上期能源</button>
+                <button class="tab" data-market="中金所">中金所</button>
+              </div>
+              <div class="commodity-grid" id="commodityGrid"></div>
+              <label class="checkbox-line"><input type="checkbox" /> 自动应用偏好至新上线模块</label>
+              <div class="center-actions"><button class="btn btn-primary">确定</button></div>
+            </div>
+          </section>
+
+          <section class="view" id="enterprise-domain">
+            <div class="content-top">
+              <h2 class="content-heading">开通企业域</h2>
+            </div>
+            <div class="content-body">
+              <div class="stepper">
+                <div class="step done"><div class="step-dot">✓</div><div>个人信息采集</div></div>
+                <div class="step active"><div class="step-dot">2</div><div>个人身份认证</div></div>
+                <div class="step"><div class="step-dot">3</div><div>企业信息采集</div></div>
+                <div class="step"><div class="step-dot">4</div><div>企业身份识别</div></div>
+                <div class="step"><div class="step-dot">5</div><div>纸张材料准备</div></div>
+              </div>
+              <div class="qr-area">
+                <div class="qr" aria-label="二维码"></div>
+                <div class="field-value">提示信息：请通过微信扫描二维码发起人脸识别认证身份</div>
+              </div>
+              <div class="center-actions">
+                <button class="btn btn-outline">上一步</button>
+                <button class="btn btn-primary">保存并下一步</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="message-notifications">
+            <div class="content-top">
+              <h2 class="content-heading">通知设置</h2>
+            </div>
+            <div class="content-body">
+              <div class="setting-list">
+                <div class="setting-row">
+                  <div class="field-label">站内信：</div>
+                  <label class="switch"><input type="checkbox" checked disabled /><span class="slider"></span></label>
+                </div>
+                <div class="setting-note">注：为确保您能及时收到重要通知并符合合规要求，站内信提醒功能默认开启且暂不支持关闭</div>
+                <div class="setting-row">
+                  <div class="field-label">天玑App：</div>
+                  <label class="switch"><input type="checkbox" checked /><span class="slider"></span></label>
+                </div>
+                <div class="setting-row">
+                  <div class="field-label">微信：</div>
+                  <label class="switch"><input type="checkbox" /><span class="slider"></span></label>
+                </div>
+                <div class="center-actions"><button class="btn btn-primary">确定</button></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="view" id="business-manager">
+            <div class="content-top">
+              <h2 class="content-heading">业务经理信息</h2>
+            </div>
+            <div class="content-body">
+              <article class="manager-card">
+                <div class="manager-photo"></div>
+                <div>
+                  <h3 class="manager-name">黄靖杰</h3>
+                  <div class="manager-meta">华泰期货业务经理</div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <button class="floating-help" aria-label="帮助">?</button>
+
+  <div class="modal-mask" id="certModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="certTitle">
+      <div class="modal-head">
+        <h2 id="certTitle">企业认证</h2>
+        <button class="close" data-close-modal aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="radio-row">
+          <span>企业类型：</span>
+          <label><input name="companyType" type="radio" checked /> 一般企业</label>
+          <label><input name="companyType" type="radio" /> 个体工商户</label>
+          <label><input name="companyType" type="radio" /> 境外企业</label>
+        </div>
+        <div class="form-grid">
+          <div class="form-item full">
+            <label><span class="required">*</span> 工作证明</label>
+            <div class="upload">点击或拖拽上传工作证明</div>
+          </div>
+          <div class="form-item full">
+            <label><span class="required">*</span> 姓名：</label>
+            <input class="input" value="曹端红" />
+          </div>
+          <div class="form-item full">
+            <label><span class="required">*</span> 机构/公司名称：</label>
+            <input class="input" value="奕丰基金销售有限公司" />
+          </div>
+          <div class="form-item">
+            <label><span class="required">*</span> 部门：</label>
+            <select class="select"><option>其他</option><option>高管</option><option>研究部</option></select>
+          </div>
+          <div class="form-item">
+            <label><span class="required">*</span> 职位：</label>
+            <select class="select"><option>其他</option><option>业务经理</option><option>投资经理</option></select>
+          </div>
+          <div class="form-item full">
+            <label><span class="required">*</span> 常驻办公地：</label>
+            <select class="select"><option>北京市</option><option>天津市</option><option>上海市</option></select>
+          </div>
+          <div class="form-item">
+            <label>手机号码：</label>
+            <input class="input" value="184****1472" disabled />
+          </div>
+          <div class="form-item">
+            <label><span class="required">*</span> 邮箱：</label>
+            <input class="input" value="dcao0228@foxmail.com" />
+          </div>
+        </div>
+        <div class="center-actions"><button class="btn btn-primary" data-close-modal>提交认证</button></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const menuButtons = document.querySelectorAll("[data-page]");
+    const views = document.querySelectorAll(".view");
+
+    function showPage(pageId, activeButton) {
+      views.forEach(view => {
+        view.classList.toggle("active", view.id === pageId);
+      });
+      menuButtons.forEach(button => {
+        button.classList.toggle("active", button === activeButton);
+      });
+    }
+
+    menuButtons.forEach(button => {
+      button.addEventListener("click", () => showPage(button.dataset.page, button));
+    });
+
+    document.querySelectorAll("[data-toggle-group]").forEach(button => {
+      button.addEventListener("click", () => {
+        const group = button.closest(".menu-block");
+        group.classList.toggle("open");
+        button.querySelector(".menu-caret").textContent = group.classList.contains("open") ? "⌃" : "⌄";
+      });
+    });
+
+    const modal = document.getElementById("certModal");
+    document.querySelectorAll("[data-open-modal]").forEach(button => {
+      button.addEventListener("click", () => {
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(button => {
+      button.addEventListener("click", () => {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+      });
+    });
+    modal.addEventListener("click", event => {
+      if (event.target === modal) {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    });
+
+    const cancelAgree = document.getElementById("cancelAgree");
+    const cancelAccountBtn = document.getElementById("cancelAccountBtn");
+    cancelAgree.addEventListener("change", () => {
+      cancelAccountBtn.disabled = !cancelAgree.checked;
+    });
+
+    const marketData = {
+      "上期所": ["镍", "合成橡胶", "胶版印刷纸", "石油沥青", "天然橡胶", "铝", "纸浆", "线材", "氧化铝", "不锈钢", "铜", "锌", "铅", "锡", "铸造铝合金", "热轧卷板", "黄金", "燃料油", "螺纹钢", "白银"],
+      "大商所": ["豆一", "豆二", "豆粕", "豆油", "玉米", "棕榈油", "铁矿石", "焦煤", "焦炭", "鸡蛋"],
+      "郑商所": ["白糖", "棉花", "PTA", "甲醇", "玻璃", "菜粕", "菜油", "苹果", "红枣", "尿素"],
+      "广期所": ["工业硅", "碳酸锂", "多晶硅"],
+      "上期能源": ["原油", "低硫燃料油", "20号胶", "国际铜", "集运指数"],
+      "中金所": ["沪深300", "中证500", "中证1000", "上证50", "国债期货"]
+    };
+    const selected = new Set(["合成橡胶", "燃料油"]);
+    const commodityGrid = document.getElementById("commodityGrid");
+
+    function renderCommodities(market) {
+      commodityGrid.innerHTML = "";
+      marketData[market].forEach(name => {
+        const button = document.createElement("button");
+        button.className = "tag-option" + (selected.has(name) ? " active" : "");
+        button.textContent = name;
+        button.addEventListener("click", () => {
+          if (selected.has(name)) selected.delete(name);
+          else selected.add(name);
+          button.classList.toggle("active");
+        });
+        commodityGrid.appendChild(button);
+      });
+    }
+
+    document.querySelectorAll("#marketTabs .tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll("#marketTabs .tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        renderCommodities(tab.dataset.market);
+      });
+    });
+
+    renderCommodities("上期所");
+  </script>
+</body>
+</html>
